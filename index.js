@@ -33,7 +33,7 @@
 // THE SOFTWARE.
 //================================================================================================
 
-var i2c = require('i2c');
+var i2c = require('@abandonware/i2c');
 
 /**
  * Default constructor, uses default I2C address or default SS Pin if SPI
@@ -56,9 +56,9 @@ MPU6050.DEFAULT_ADDRESS = MPU6050.ADDRESS_AD0_LOW;
  * the clock source to use the X Gyro for reference, which is slightly better than
  * the default internal clock source.
  */
-MPU6050.prototype.initialize = function() {
-  this.i2cdev = new I2cDev(this.address, {device : this.device});
-  
+MPU6050.prototype.initialize = function () {
+  this.i2cdev = new I2cDev(this.address, { device: this.device });
+
   this.setClockSource(MPU6050.CLOCK_PLL_XGYRO);
   this.setFullScaleGyroRange(MPU6050.GYRO_FS_250);
   this.setFullScaleAccelRange(MPU6050.ACCEL_FS_2);
@@ -70,7 +70,7 @@ MPU6050.prototype.initialize = function() {
  * Make sure the device is connected and responds as expected.
  * @param callback
  */
-MPU6050.prototype.testConnection = function(callback) {
+MPU6050.prototype.testConnection = function (callback) {
   this.getDeviceID(function (err, data) {
     if (err) {
       return callback(err);
@@ -92,7 +92,7 @@ MPU6050.WHO_AM_I_LENGTH = 6;
  * @param callback
  * @return Device ID (should be 0x68, 104 dec, 150 oct)
  */
-MPU6050.prototype.getDeviceID = function(callback) {
+MPU6050.prototype.getDeviceID = function (callback) {
   this.i2cdev.readBits(MPU6050.RA_WHO_AM_I, MPU6050.WHO_AM_I_BIT, MPU6050.WHO_AM_I_LENGTH, callback);
 };
 
@@ -103,7 +103,7 @@ MPU6050.prototype.getDeviceID = function(callback) {
  * @param id New device ID to set.
  * @see getDeviceID()
  */
-MPU6050.prototype.setDeviceID = function(id) {
+MPU6050.prototype.setDeviceID = function (id) {
   this.i2cdev.writeBits(MPU6050.RA_WHO_AM_I, MPU6050.WHO_AM_I_BIT, MPU6050.WHO_AM_I_LENGTH, id);
 };
 
@@ -112,8 +112,8 @@ MPU6050.prototype.setDeviceID = function(id) {
 MPU6050.RA_GYRO_CONFIG = 0x1B;
 MPU6050.GCONFIG_FS_SEL_BIT = 4;
 MPU6050.GCONFIG_FS_SEL_LENGTH = 2;
-MPU6050.GYRO_FS_250  = 0x00;
-MPU6050.GYRO_FS_500  = 0x01;
+MPU6050.GYRO_FS_250 = 0x00;
+MPU6050.GYRO_FS_500 = 0x01;
 MPU6050.GYRO_FS_1000 = 0x02;
 MPU6050.GYRO_FS_2000 = 0x03;
 
@@ -131,7 +131,7 @@ MPU6050.GYRO_FS_2000 = 0x03;
  *
  * @param callback
  */
-MPU6050.prototype.getFullScaleGyroRange = function(callback) {
+MPU6050.prototype.getFullScaleGyroRange = function (callback) {
   this.i2cdev.readBits(MPU6050.RA_GYRO_CONFIG, MPU6050.GCONFIG_FS_SEL_BIT, MPU6050.GCONFIG_FS_SEL_LENGTH, callback);
 };
 
@@ -144,7 +144,7 @@ MPU6050.prototype.getFullScaleGyroRange = function(callback) {
  * @see MPU6050_GCONFIG_FS_SEL_BIT
  * @see MPU6050_GCONFIG_FS_SEL_LENGTH
  */
-MPU6050.prototype.setFullScaleGyroRange = function(range) {
+MPU6050.prototype.setFullScaleGyroRange = function (range) {
   this.i2cdev.writeBits(MPU6050.RA_GYRO_CONFIG, MPU6050.GCONFIG_FS_SEL_BIT, MPU6050.GCONFIG_FS_SEL_LENGTH, range);
 };
 
@@ -153,9 +153,9 @@ MPU6050.prototype.setFullScaleGyroRange = function(range) {
 MPU6050.RA_ACCEL_CONFIG = 0x1C;
 MPU6050.ACONFIG_AFS_SEL_BIT = 4;
 MPU6050.ACONFIG_AFS_SEL_LENGTH = 2;
-MPU6050.ACCEL_FS_2  = 0x00;
-MPU6050.ACCEL_FS_4  = 0x01;
-MPU6050.ACCEL_FS_8  = 0x02;
+MPU6050.ACCEL_FS_2 = 0x00;
+MPU6050.ACCEL_FS_4 = 0x01;
+MPU6050.ACCEL_FS_8 = 0x02;
 MPU6050.ACCEL_FS_16 = 0x03;
 
 /**
@@ -172,7 +172,7 @@ MPU6050.ACCEL_FS_16 = 0x03;
  *
  * @param callback
  */
-MPU6050.prototype.getFullScaleAccelRange = function(callback) {
+MPU6050.prototype.getFullScaleAccelRange = function (callback) {
   this.i2cdev.readBits(MPU6050.RA_ACCEL_CONFIG, MPU6050.ACONFIG_AFS_SEL_BIT, MPU6050.ACONFIG_AFS_SEL_LENGTH, callback);
 };
 
@@ -181,7 +181,7 @@ MPU6050.prototype.getFullScaleAccelRange = function(callback) {
  * @param range New full-scale accelerometer range setting
  * @see getFullScaleAccelRange()
  */
-MPU6050.prototype.setFullScaleAccelRange = function(range) {
+MPU6050.prototype.setFullScaleAccelRange = function (range) {
   this.i2cdev.writeBits(MPU6050.RA_ACCEL_CONFIG, MPU6050.ACONFIG_AFS_SEL_BIT, MPU6050.ACONFIG_AFS_SEL_LENGTH, range);
 };
 
@@ -228,8 +228,8 @@ MPU6050.RA_ACCEL_ZOUT_L = 0x40;
  *
  * @param callback
  */
-MPU6050.prototype.getAcceleration = function(callback) {
-  this.i2cdev.readBytes(MPU6050.RA_ACCEL_XOUT_H, 6, function(err, buffer){
+MPU6050.prototype.getAcceleration = function (callback) {
+  this.i2cdev.readBytes(MPU6050.RA_ACCEL_XOUT_H, 6, function (err, buffer) {
     if (err) return callback(err);
 
     callback(null, [
@@ -247,8 +247,8 @@ MPU6050.prototype.getAcceleration = function(callback) {
  * @see getRotation()
  * @param callback
  */
-MPU6050.prototype.getMotion6 = function(callback) {
-  this.i2cdev.readBytes(MPU6050.RA_ACCEL_XOUT_H, 14, function(err, buffer){
+MPU6050.prototype.getMotion6 = function (callback) {
+  this.i2cdev.readBytes(MPU6050.RA_ACCEL_XOUT_H, 14, function (err, buffer) {
     if (err) return callback(err);
 
     callback(null, [
@@ -301,11 +301,11 @@ MPU6050.RA_GYRO_ZOUT_L = 0x48;
  * @param callback
  * @see getMotion6()
  */
-MPU6050.prototype.getRotation = function(callback) {
-   this.i2cdev.readBytes(MPU6050.RA_GYRO_XOUT_H, 6, function(err, buffer){
-     if (err) return callback(err);
-     callback(null, [buffer.readInt16BE(0), buffer.readInt16BE(2), buffer.readInt16BE(4)]);
-   });
+MPU6050.prototype.getRotation = function (callback) {
+  this.i2cdev.readBytes(MPU6050.RA_GYRO_XOUT_H, 6, function (err, buffer) {
+    if (err) return callback(err);
+    callback(null, [buffer.readInt16BE(0), buffer.readInt16BE(2), buffer.readInt16BE(4)]);
+  });
 };
 
 
@@ -330,7 +330,7 @@ MPU6050.PWR1_CLKSEL_LENGTH = 3;
  * @see MPU6050_RA_PWR_MGMT_1
  * @see MPU6050_PWR1_SLEEP_BIT
  */
-MPU6050.prototype.getSleepEnabled = function(callback) {
+MPU6050.prototype.getSleepEnabled = function (callback) {
   this.i2cdev.readBit(MPU6050.RA_PWR_MGMT_1, MPU6050.PWR1_SLEEP_BIT, callback);
 };
 
@@ -340,7 +340,7 @@ MPU6050.prototype.getSleepEnabled = function(callback) {
  * @see MPU6050_RA_PWR_MGMT_1
  * @see MPU6050_PWR1_SLEEP_BIT
  */
-MPU6050.prototype.setSleepEnabled = function(enabled) {
+MPU6050.prototype.setSleepEnabled = function (enabled) {
   this.i2cdev.writeBit(MPU6050.RA_PWR_MGMT_1, MPU6050.PWR1_SLEEP_BIT, enabled);
 };
 
@@ -380,7 +380,7 @@ MPU6050.prototype.getClockSource = function (callback) {
  * @param source New clock source setting
  * @see getClockSource()
  */
-MPU6050.prototype.setClockSource = function(source) {
+MPU6050.prototype.setClockSource = function (source) {
   this.i2cdev.writeBits(MPU6050.RA_PWR_MGMT_1, MPU6050.PWR1_CLKSEL_BIT, MPU6050.PWR1_CLKSEL_LENGTH, source);
 };
 
@@ -391,12 +391,12 @@ MPU6050.RA_TEMP_OUT = 0x41;
 /**
  * Get temperature in celsius degrees
  */
-MPU6050.prototype.getTemperature = function(callback) {
-    this.i2cdev.readBytes(MPU6050.RA_TEMP_OUT, 2, function(err, buffer){
-        if (err) return callback(err);
-        var data = buffer.readInt16BE(0) / 340 + 35;
-        if (callback) callback(null, [data]);
-    });
+MPU6050.prototype.getTemperature = function (callback) {
+  this.i2cdev.readBytes(MPU6050.RA_TEMP_OUT, 2, function (err, buffer) {
+    if (err) return callback(err);
+    var data = buffer.readInt16BE(0) / 340 + 35;
+    if (callback) callback(null, [data]);
+  });
 };
 
 module.exports = MPU6050;
@@ -412,26 +412,26 @@ function I2cDev(address, options) {
 I2cDev.prototype = Object.create(i2c.prototype);
 I2cDev.prototype.constructor = I2cDev;
 
-I2cDev.prototype.bitMask = function(bit, bitLength) {
+I2cDev.prototype.bitMask = function (bit, bitLength) {
   return ((1 << bitLength) - 1) << (1 + bit - bitLength);
 };
 
-I2cDev.prototype.readBits = function(func, bit, bitLength, callback) {
+I2cDev.prototype.readBits = function (func, bit, bitLength, callback) {
   var mask = this.bitMask(bit, bitLength);
-  
-  this.readBytes(func, 1, function(err, buf) {
+
+  this.readBytes(func, 1, function (err, buf) {
     var bits = (buf[0] & mask) >> (1 + bit - bitLength);
     callback(err, bits);
   });
 };
 
-I2cDev.prototype.readBit = function(func, bit, bitLength, callback) {
+I2cDev.prototype.readBit = function (func, bit, bitLength, callback) {
   this.readBits(func, bit, 1, callback);
 };
 
-I2cDev.prototype.writeBits = function(func, bit, bitLength, value) {
+I2cDev.prototype.writeBits = function (func, bit, bitLength, value) {
   var self = this;
-  self.readBytes(func, 1, function(err, oldValue) {
+  self.readBytes(func, 1, function (err, oldValue) {
     var mask = self.bitMask(bit, bitLength);
     var newValue = oldValue ^ ((oldValue ^ (value << bit)) & mask);
     self.writeBytes(func, [newValue], function (err) {
@@ -442,7 +442,7 @@ I2cDev.prototype.writeBits = function(func, bit, bitLength, value) {
   });
 };
 
-I2cDev.prototype.writeBit = function(func, bit, value) {
+I2cDev.prototype.writeBit = function (func, bit, value) {
   this.writeBits(func, bit, 1, value);
 };
 
